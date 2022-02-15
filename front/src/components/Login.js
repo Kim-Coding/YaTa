@@ -15,8 +15,8 @@ const Login = ({ setIsLogin }) => {
       method: "post",
       url: "/login",
       data: {
-        user_id: userId,
-        user_pw: userPw,
+        id: userId,
+        pw: userPw,
       },
     });
 
@@ -30,24 +30,31 @@ const Login = ({ setIsLogin }) => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          name="user_id"
-          value={userId || ""}
-          onChange={(e) => setUserId(e.target.value)}
-          placeholder="id"
-        />
-        <input
-          type="password"
-          name="user_pw"
-          value={userPw || ""}
-          onChange={(e) => setUserPw(e.target.value)}
-          placeholder="pw"
-        />
-        <button type="submit">Login</button>
-      </form>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        width: "100%",
+        height: "100vh",
+      }}
+    >
+      <input
+        type="text"
+        name="user_id"
+        onChange={(e) => setUserId(e.target.value)}
+        placeholder="id"
+      />
+      <input
+        type="password"
+        name="user_pw"
+        onChange={(e) => setUserPw(e.target.value)}
+        placeholder="pw"
+      />
+      <button type="submit" onClick={handleSubmit}>
+        Login
+      </button>
       <button>
         <Link to="/signup">회원가입</Link>
       </button>

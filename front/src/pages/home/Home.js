@@ -7,7 +7,7 @@ const Home = () => {
 
   return (
     <div>
-      <div>YaTa</div>
+      <h1 style={{ textAlign: "center" }}>YaTa</h1>
       {!isLogin ? <Login setIsLogin={setIsLogin} /> : <Call />}
     </div>
   );
