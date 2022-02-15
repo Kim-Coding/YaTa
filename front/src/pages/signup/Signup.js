@@ -8,15 +8,6 @@ const Signup = () => {
   const [userType, setUserType] = useState("");
   const [isJoinSuccess, setJoinSuccess] = useState(false);
 
-  const createUserApi = (user) => {
-    return fetch("/users/new", {
-      method: "POST",
-      body: JSON.stringify(user),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((response) => response.json());
-  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -30,7 +21,7 @@ const Signup = () => {
         },
       });
 
-      if (response.success === true) {
+      if (response.data.result === "ok") {
         setJoinSuccess(true);
       }
     } catch (err) {

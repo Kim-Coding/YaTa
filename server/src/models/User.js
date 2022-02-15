@@ -10,7 +10,6 @@ const userSchema = mongoose.Schema({
   },
   pw: {
     type: String,
-    minlength: 5,
   },
   userType: {
     type: String,
