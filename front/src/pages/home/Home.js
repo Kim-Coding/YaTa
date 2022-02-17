@@ -1,14 +1,11 @@
-import { useState } from "react";
-import Call from "../../components/Call";
-import Login from "../../components/Login";
+import { Link } from "react-router-dom";
 
 const Home = () => {
-  const [isLogin, setIsLogin] = useState(false);
-
   return (
     <div>
       <h1 style={{ textAlign: "center" }}>YaTa</h1>
-      {!isLogin ? <Login setIsLogin={setIsLogin} /> : <Call />}
+      <Link to="/signin">로그인</Link>
+      <Link to="/signup">회원가입</Link>
     </div>
   );
 };

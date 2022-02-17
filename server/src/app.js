@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const usersController = require("./controllers/user.controllers");
+const auth = require("./controllers/user.controllers");
 dotenv.config();
 
 const app = express();
@@ -15,8 +15,7 @@ mongoose
     console.log(err);
   });
 
-app.post("/login", usersController.createToken);
-app.post("/register", usersController.createNewUser);
+app.use("/api/auth", auth);
 
 app.set("port", process.env.PORT || 8080);
 app.listen(app.get("port"), () => {

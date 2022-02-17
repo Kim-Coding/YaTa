@@ -1,17 +1,16 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/home";
 import Signup from "./pages/signup";
-import { CookiesProvider } from "react-cookie";
+import Signin from "./pages/signin";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <CookiesProvider>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/signup" element={<Signup />} />
-        </Routes>
-      </CookiesProvider>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={<Signin />} />
+      </Routes>
     </BrowserRouter>
   );
 };

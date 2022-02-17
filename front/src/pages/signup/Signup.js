@@ -6,14 +6,13 @@ const Signup = () => {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
   const [userType, setUserType] = useState("");
-  const [isJoinSuccess, setJoinSuccess] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const response = await axios({
         method: "post",
-        url: "/register",
+        url: "/api/auth/signup",
         data: {
           id: userId,
           pw: userPw,
@@ -22,7 +21,7 @@ const Signup = () => {
       });
 
       if (response.data.result === "ok") {
-        setJoinSuccess(true);
+        console.log("회원가입 성공 페이지 이동");
       }
     } catch (err) {
       console.error("login error", err);
@@ -47,50 +46,40 @@ const Signup = () => {
           height: "100vh",
         }}
       >
-        {!isJoinSuccess && (
-          <>
-            <h2>회원가입</h2>
-            <input
-              type="text"
-              name="user_id"
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder="id"
-            />
-            <input
-              type="password"
-              name="user_pw"
-              onChange={(e) => setUserPw(e.target.value)}
-              placeholder="pw"
-            />
-            <span>
-              드라이버
-              <input
-                value="드라이버"
-                type="radio"
-                name="user"
-                onClick={onValueChange}
-              />
-            </span>
-            <span>
-              일반인
-              <input
-                value="일반인"
-                type="radio"
-                name="user"
-                onClick={onValueChange}
-              />
-            </span>
-            <button type="submit" onClick={handleSubmit}>
-              제출
-            </button>
-          </>
-        )}
-        {isJoinSuccess && (
-          <div>
-            <p>회원가입을 축하합니다!</p>
-            <Link to="/">로그인</Link>
-          </div>
-        )}
+        <h2>회원가입</h2>
+        <input
+          type="text"
+          name="user_id"
+          onChange={(e) => setUserId(e.target.value)}
+          placeholder="id"
+        />
+        <input
+          type="password"
+          name="user_pw"
+          onChange={(e) => setUserPw(e.target.value)}
+          placeholder="pw"
+        />
+        <span>
+          드라이버
+          <input
+            value="드라이버"
+            type="radio"
+            name="user"
+            onClick={onValueChange}
+          />
+        </span>
+        <span>
+          일반인
+          <input
+            value="일반인"
+            type="radio"
+            name="user"
+            onClick={onValueChange}
+          />
+        </span>
+        <button type="submit" onClick={handleSubmit}>
+          제출
+        </button>
       </div>
     </div>
   );
