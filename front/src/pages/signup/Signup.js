@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import StyledDiv from "../../style/StyledDiv";
 
 const Signup = () => {
   const [userId, setUserId] = useState("");
@@ -36,16 +37,7 @@ const Signup = () => {
   return (
     <div>
       <Link to="/">Home</Link>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          width: "100%",
-          height: "100vh",
-        }}
-      >
+      <StyledDiv>
         <h2>회원가입</h2>
         <input
           type="text"
@@ -80,7 +72,7 @@ const Signup = () => {
         <button type="submit" onClick={handleSubmit}>
           제출
         </button>
-      </div>
+      </StyledDiv>
     </div>
   );
 };
