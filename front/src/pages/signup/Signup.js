@@ -1,32 +1,30 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import StyledDiv from "../../style/StyledDiv";
+import { Link, useNavigate } from "react-router-dom";
+import { signUpAxios } from "../../utils/signAxios";
+import StyledDiv from "../../components/layout/StyledDiv";
 
 const Signup = () => {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
   const [userType, setUserType] = useState("");
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const response = await axios({
-        method: "post",
-        url: "/api/auth/signup",
-        data: {
-          id: userId,
-          pw: userPw,
-          userType: userType,
-        },
-      });
 
-      if (response.data.result === "ok") {
-        console.log("회원가입 성공 페이지 이동");
-      }
+    try {
+      await signUpAxios("post", "signup", userId, userPw, userType).then(
+        (res) => {
+          if (res.data.result) {
+            navigate("/signin", { replace: true });
+            alert("회원가입에 성공하셨습니다. 로그인 후 이용해 주세요");
+          }
+        }
+      );
     } catch (err) {
       console.error("login error", err);
-      alert("회원가입에 실패하였습니다. 잠시 후 다시 시도해주세요.");
+      alert("회원가입에 실패하였습니다. 아이디 중복");
     }
   };
 

@@ -4,39 +4,39 @@ const express = require("express");
 const router = express.Router();
 require("dotenv").config();
 
-router.post("/signin", async function (req, res, next) {
+router.post("/signin", async (req, res, next) => {
   try {
-    const user = await User.find(req.body);
-    if (user.length) {
-      const token = jwt.sign(
-        {
-          user_id: user[0].user_id,
-        },
-        process.env.SECRET_KEY,
-        {
-          expiresIn: "1h",
-        }
-      );
-      res.cookie("user", token);
-      res.status(201).json({
-        result: "ok",
-        token,
-      });
-    } else {
-      res.status(400).json({ error: "invalid user" });
-    }
+    await User.find(req.body).then((data) => {
+      const user = data[0];
+      if (user) {
+        const token = jwt.sign(
+          {
+            user_id: user.id,
+          },
+          process.env.SECRET_KEY,
+          {
+            expiresIn: "1h",
+          }
+        );
+        res.cookie("user", token);
+        res.status(201).json({
+          result: true,
+          token,
+        });
+      } else {
+        res.json({ result: false });
+      }
+    });
   } catch (err) {
     console.error(err);
     next(err);
   }
 });
-router.post("/signup", async function (req, res, next) {
+
+router.post("/signup", async (req, res, next) => {
   try {
-    const user = await new User(req.body).save();
-    res.status(201).json({
-      result: "ok",
-      user: user,
-    });
+    await new User(req.body).save();
+    res.json({ result: true });
   } catch (err) {
     console.error(err);
     next(err);
@@ -57,3 +57,5 @@ router.post("/verify", (req, res, next) => {
     res.status(401).json({ error: "token expired" });
   }
 });
+
+module.exports = router;

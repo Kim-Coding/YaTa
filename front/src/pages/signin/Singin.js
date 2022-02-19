@@ -1,39 +1,40 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import axios from "axios";
-import StyledDiv from "../../style/StyledDiv";
+import { Link, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { signInAxios } from "../../utils/signAxios";
+import StyledDiv from "../../components/layout/StyledDiv";
+import { useCookies } from "react-cookie";
 
 const Signin = () => {
   const [userId, setUserId] = useState("");
   const [userPw, setUserPw] = useState("");
+  const [cookies, setCookie] = useCookies([""]);
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!userId || !userPw) {
       return;
     }
-    const response = await axios({
-      method: "post",
-      url: "/api/auth/signin",
-      data: {
-        id: userId,
-        pw: userPw,
-      },
-    });
 
-    if (response.data.result === "ok") {
-      console.log("로그인 성공");
-    } else {
-      alert("로그인에 실패했습니다.");
-      setUserId("");
-      setUserPw("");
-    }
+    await signInAxios("post", "signin", userId, userPw).then((res) => {
+      console.log(res);
+      if (res.data.result) {
+        localStorage.setItem("token", res.data.token);
+        navigate("/call", { replace: true });
+      } else {
+        alert("아이디 비밀번호 확인해주세요");
+        setUserId("");
+        setUserPw("");
+      }
+    });
   };
 
   return (
     <div>
       <Link to="/">Home</Link>
       <StyledDiv>
+        <h2>로그인</h2>
         <input
           type="text"
           name="user_id"
