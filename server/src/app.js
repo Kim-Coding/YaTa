@@ -10,10 +10,11 @@ const app = express();
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: "http://localhost:3000",
+  origin: true,
+  credentials: true,
   optionsSuccessStatus: 200,
 };
-app.use(cors());
+app.use(cors(corsOptions));
 
 mongoose
   .connect(process.env.CONNECTION_STR, {})

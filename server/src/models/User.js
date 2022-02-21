@@ -14,27 +14,7 @@ const userSchema = mongoose.Schema({
   userType: {
     type: String,
   },
-  token: { type: String },
-  tokenTime: {
-    type: Number,
-  },
-});
-
-userSchema.pre("save", function (next) {
-  let user = this;
-
-  if (user.isModified("password")) {
-    bcrypt.genSalt(saltRounds, function (err, salt) {
-      if (err) return next(err);
-      bcrypt.hash(user.pw, salt, function (err, hash) {
-        if (err) return next(err);
-        user.pw = hash;
-        next();
-      });
-    });
-  } else {
-    next();
-  }
+  refreshToken: { type: String },
 });
 
 const User = mongoose.model("User", userSchema);

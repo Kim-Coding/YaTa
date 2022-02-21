@@ -1,16 +1,25 @@
-export const setToken = (token) => {
-  return localStorage.setItem("token", token);
+const token = (type) => {
+  return document.cookie
+    ? document.cookie
+        .split("; ")
+        .find((row) => row.startsWith(`${type}Token`))
+        .split("=")
+    : null;
 };
 
-export const getToken = () => {
-  return localStorage.getItem("token");
+export const setToken = (tokenName, token) => {
+  document.cookie = `${tokenName}=${token}`;
+};
+
+export const getToken = (type) => {
+  return token(type)[1];
 };
 
 export const removeToken = () => {
-  return localStorage.removeItem("token");
+  document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+  document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
 };
 
 export const isToken = () => {
-  if (!localStorage.getItem("token")) return false;
-  return true;
+  return token("access") ? true : false;
 };
