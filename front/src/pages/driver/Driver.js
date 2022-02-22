@@ -1,7 +1,7 @@
 import { removeToken } from "../../utils/token";
 import { useNavigate } from "react-router-dom";
 
-const Call = () => {
+const Driver = () => {
   const navigate = useNavigate();
   const Logout = () => {
     removeToken();
@@ -15,4 +15,4 @@ const Call = () => {
   );
 };
 
-export default Call;
+export default Driver;

@@ -15,7 +15,11 @@ const Signin = () => {
       if (res.data.result) {
         setToken("accessToken", res.data.accessToken);
         setToken("refreshToken", res.data.refreshToken);
-        navigate("/call", { replace: true });
+        if (res.data.userType === "일반인") {
+          navigate("/call");
+        } else {
+          navigate("/driver");
+        }
       } else {
         alert("아이디 비밀번호 확인해주세요");
       }
