@@ -3,7 +3,7 @@ import React from "react";
 import { signInAxios } from "../../utils/signAxios";
 import StyledDiv from "../../components/layout/StyledDiv";
 import StyledForm from "../../components/layout/StyleForm";
-import { setToken } from "../../utils/token";
+
 import { useForm } from "react-hook-form";
 
 const Signin = () => {
@@ -11,19 +11,8 @@ const Signin = () => {
   const navigate = useNavigate();
 
   const signIn = async (e) => {
-    await signInAxios("post", "signin", e.id, e.pw).then((res) => {
-      if (res.data.result) {
-        setToken("accessToken", res.data.accessToken);
-        setToken("refreshToken", res.data.refreshToken);
-        if (res.data.userType === "일반인") {
-          navigate("/call");
-        } else {
-          navigate("/driver");
-        }
-      } else {
-        alert("아이디 비밀번호 확인해주세요");
-      }
-    });
+    const result = await signInAxios("post", "signin", e.id, e.pw);
+    result === "일반인" ? navigate("/call") : navigate("/driver");
   };
 
   return (

@@ -15,9 +15,12 @@ export const verifyAxios = (method, url) => {
       if (result.data.refreshToken) {
         setToken("refreshToken", result.data.refreshToken);
       }
-      return { isLogin: result.data.isLogin, userType: result.data.userType };
+      return {
+        isLogin: result.data.isLogin,
+        userType: result.data.userType,
+      };
     } else {
-      return false;
+      return { isLogin: false };
     }
   });
 };

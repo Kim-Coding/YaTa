@@ -1,25 +1,33 @@
 import { useEffect } from "react";
+import { isToken } from "../utils/token";
 import { useNavigate } from "react-router-dom";
-import { verifyAxios } from "../utils/verifyAxios";
 
-const Auth = (SpecificComponent, needLogin) => {
+const Auth = (SpecificComponent) => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    verifyAxios("get", "verify").then((data) => {
-      if (data.isLogin) {
-        if (data.userType === "일반인") {
-          navigate("/call");
-        } else {
-          navigate("driver");
+  const authCheck = () => {
+    isToken().then((res) => {
+      if (res.isLogin) {
+        switch (res.userType) {
+          case "일반인":
+            navigate("/call");
+            break;
+          case "드라이버":
+            navigate("/driver");
+            break;
+          default:
         }
       } else {
         navigate("/");
       }
     });
+  };
+
+  useEffect(() => {
+    authCheck();
   }, []);
 
-  return SpecificComponent;
+  return <SpecificComponent />;
 };
 
 export default Auth;

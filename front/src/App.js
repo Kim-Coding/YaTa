@@ -6,16 +6,20 @@ import Signin from "./pages/signin";
 import Call from "./pages/call";
 import Auth from "./hoc/Auth";
 import Driver from "./pages/driver";
+import Nav from "./components/Nav";
 
 const App = () => {
   return (
     <CookiesProvider>
       <Routes>
-        <Route path="/" element={Auth(<Home />, false)} />
-        <Route path="/signup" element={Auth(<Signup />, false)} />
-        <Route path="/signin" element={Auth(<Signin />, false)} />
-        <Route path="/call" element={Auth(<Call />, true)} />)
-        <Route path="/driver" element={Auth(<Driver />, true)} />)
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={<Signin />} />
+
+        <Route element={<Nav />}>
+          <Route path="/call" element={Auth(Call)} />)
+          <Route path="/driver" element={Auth(Driver)} />)
+        </Route>
       </Routes>
     </CookiesProvider>
   );

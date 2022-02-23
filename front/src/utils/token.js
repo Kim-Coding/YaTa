@@ -1,3 +1,5 @@
+import { verifyAxios } from "./verifyAxios";
+
 const token = (type) => {
   return document.cookie
     ? document.cookie
@@ -21,5 +23,5 @@ export const removeToken = () => {
 };
 
 export const isToken = () => {
-  return token("access") ? true : false;
+  return verifyAxios("get", "verify");
 };
