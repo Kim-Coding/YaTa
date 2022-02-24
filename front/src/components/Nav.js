@@ -28,6 +28,10 @@ const Nav = () => {
     setAnchorEl(null);
   };
 
+  const goMyAccount = () => {
+    navigate("/info");
+  };
+
   return (
     <>
       <Box sx={{ flexGrow: 1 }}>
@@ -62,7 +66,7 @@ const Nav = () => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>ℹ️ My account</MenuItem>
+                <MenuItem onClick={goMyAccount}>ℹ️ My account</MenuItem>
                 <MenuItem onClick={logout}>👋 Logout</MenuItem>
               </Menu>
             </div>

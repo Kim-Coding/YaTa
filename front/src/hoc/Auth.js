@@ -1,14 +1,19 @@
 import { useEffect } from "react";
-import { isToken } from "../utils/token";
 import { useNavigate } from "react-router-dom";
+import request from "../utils/axios";
 
 const Auth = (SpecificComponent) => {
   const navigate = useNavigate();
 
-  const authCheck = () => {
-    isToken().then((res) => {
-      if (res.isLogin) {
-        switch (res.userType) {
+  const authCheck = async () => {
+    try {
+      const authResult = await request.get({
+        uri: "/user/auth",
+      });
+      const { isLogin, userType } = authResult.data;
+
+      if (isLogin) {
+        switch (userType) {
           case "일반인":
             navigate("/call");
             break;
@@ -20,7 +25,9 @@ const Auth = (SpecificComponent) => {
       } else {
         navigate("/");
       }
-    });
+    } catch (err) {
+      alert(err);
+    }
   };
 
   useEffect(() => {

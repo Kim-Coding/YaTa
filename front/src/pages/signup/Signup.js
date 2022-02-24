@@ -1,23 +1,42 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signUpAxios } from "../../utils/signAxios";
 import StyledDiv from "../../components/layout/StyledDiv";
 import StyledForm from "../../components/layout/StyleForm";
+import request from "../../utils/axios";
+
 import { useForm } from "react-hook-form";
+
+const initialInputs = {
+  id: "",
+  pw: "",
+  userType: "일반인",
+};
 
 const Signup = () => {
   const navigate = useNavigate();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const [inputs, setInputs] = useState(initialInputs);
+  const { id, pw, userType } = inputs;
 
-  const signUp = async (e) => {
-    const result = await signUpAxios("post", "signup", e.id, e.pw, e.userType);
-    if (result) {
-      navigate("/signin");
+  const onChangeInput = (e) => {
+    const { name, value } = e.target;
+    console.log(name, value);
+    setInputs({ ...inputs, [name]: value });
+  };
+
+  const onSummitSignUp = async (e) => {
+    e.preventDefault();
+    try {
+      const result = await request.post({
+        uri: "/api/user/signup",
+        data: { id, pw, userType },
+      });
+      if (result.data.signupSuccess) {
+        alert("회원가입에 성공하셨습니다. 로그인 후 이용해 주세요");
+        navigate("/");
+      }
+    } catch (err) {
+      alert("다른 아이디 부탁드려요");
     }
   };
 
@@ -27,18 +46,18 @@ const Signup = () => {
       <StyledDiv>
         <h2>회원가입</h2>
         <StyledForm>
-          <input placeholder="아이디" {...register("id", { required: true })} />
+          <input placeholder="아이디" name="id" onChange={onChangeInput} />
           <input
             type="password"
             placeholder="비밀번호"
-            {...register("pw", { required: true, minLength: 5 })}
+            name="pw"
+            onChange={onChangeInput}
           />
-          {errors.pw?.type === "minLength" && "최소 길이 5"}
-          <select {...register("userType")}>
+          <select name="userType" onChange={onChangeInput}>
             <option value="일반인">일반인</option>
             <option value="드라이버">드라이버</option>
           </select>
-          <input type="submit" onClick={handleSubmit(signUp)} />
+          <input type="submit" onClick={onSummitSignUp} />
         </StyledForm>
       </StyledDiv>
     </>

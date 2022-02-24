@@ -39,7 +39,8 @@ router.post("/signup", async (req, res) => {
   const user = { id: req.body.id, userType: req.body.userType };
   await User.findOne(user).then((data) => {
     if (data) {
-      res.json({ err: "아이디중복" });
+      res.send({ status: 500, message: "internal error", type: "internal" });
+      // res.json({ error: "아이디중복" });
     } else {
       const refreshToken = jwt.sign({}, process.env.REFRESH_KEY, {
         expiresIn: "7d",
@@ -50,12 +51,12 @@ router.post("/signup", async (req, res) => {
         userType: req.body.userType,
         refreshToken: refreshToken,
       }).save();
-      res.json({ result: true });
+      res.json({ signupSuccess: true });
     }
   });
 });
 
-router.get("/verify", (req, res) => {
+router.get("/auth", (req, res) => {
   const readToken = req.rawHeaders[29];
 
   if (readToken === "1") {

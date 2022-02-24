@@ -2,7 +2,7 @@ const express = require("express");
 const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const auth = require("./middlewares/auth");
+const user = require("./middlewares/user");
 const cors = require("cors");
 dotenv.config();
 
@@ -23,7 +23,7 @@ mongoose
     console.log(err);
   });
 
-app.use("/api/auth", auth);
+app.use("/api/user", user);
 
 app.set("port", process.env.PORT || 8000);
 app.listen(app.get("port"), () => {

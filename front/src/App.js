@@ -2,7 +2,6 @@ import { Routes, Route } from "react-router-dom";
 import { CookiesProvider } from "react-cookie";
 import Home from "./pages/home";
 import Signup from "./pages/signup";
-import Signin from "./pages/signin";
 import Call from "./pages/call";
 import Auth from "./hoc/Auth";
 import Driver from "./pages/driver";
@@ -14,7 +13,6 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/signin" element={<Signin />} />
 
         <Route element={<Nav />}>
           <Route path="/call" element={Auth(Call)} />)

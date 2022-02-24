@@ -1,12 +1,8 @@
-import { verifyAxios } from "./verifyAxios";
-
 const token = (type) => {
-  return document.cookie
-    ? document.cookie
-        .split("; ")
-        .find((row) => row.startsWith(`${type}Token`))
-        .split("=")
-    : null;
+  return document.cookie?.document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(`${type}Token`))
+    .split("=");
 };
 
 export const setToken = (tokenName, token) => {
@@ -23,5 +19,5 @@ export const removeToken = () => {
 };
 
 export const isToken = () => {
-  return verifyAxios("get", "verify");
+  // return verifyAxios("get", "verify");
 };
