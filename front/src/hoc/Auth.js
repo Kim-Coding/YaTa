@@ -8,11 +8,10 @@ const Auth = (SpecificComponent) => {
   const authCheck = async () => {
     try {
       const authResult = await request.get({
-        uri: "/user/auth",
+        uri: "/api/user/auth",
       });
-      const { isLogin, userType } = authResult.data;
-
-      if (isLogin) {
+      const { result, userType } = authResult.data;
+      if (result) {
         switch (userType) {
           case "일반인":
             navigate("/call");

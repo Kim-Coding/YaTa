@@ -1,5 +1,11 @@
+import Map from "../../components/Map";
+
 const Call = () => {
-  return <div>Call</div>;
+  return (
+    <div>
+      <Map />
+    </div>
+  );
 };
 
 export default Call;
