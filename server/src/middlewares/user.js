@@ -57,7 +57,9 @@ router.post("/signup", async (req, res) => {
 });
 
 router.get("/auth", (req, res) => {
-  const readToken = req.rawHeaders[29];
+  const readToken = req.rawHeaders.filter((data) =>
+    data.startsWith("accessToken")
+  )?.[0];
 
   if (readToken === "1") {
     res.json({ result: false, isLogin: false });
