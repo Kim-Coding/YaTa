@@ -39,8 +39,7 @@ router.post("/signup", async (req, res) => {
   const user = { id: req.body.id, userType: req.body.userType };
   await User.findOne(user).then((data) => {
     if (data) {
-      res.send({ status: 500, message: "internal error", type: "internal" });
-      // res.json({ error: "아이디중복" });
+      res.status(401).json({ message: "Exist User" });
     } else {
       const refreshToken = jwt.sign({}, process.env.REFRESH_KEY, {
         expiresIn: "7d",
@@ -79,7 +78,7 @@ router.get("/auth", (req, res) => {
           userType: decodedAcessToken.userType,
         });
       } else {
-        res.json({ result: false, error: "unauthorized" });
+        res.status(401).json({ result: false, error: "unauthorized" });
       }
     } catch (err) {
       if (err.name === "TokenExpiredError") {
