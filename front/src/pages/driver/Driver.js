@@ -1,7 +1,9 @@
+import DriverControl from "../../components/DriverControl";
+
 const Driver = () => {
   return (
     <>
-      <div>Driver</div>
+      <DriverControl></DriverControl>
     </>
   );
 };

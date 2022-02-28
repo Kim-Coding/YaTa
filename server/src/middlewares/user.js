@@ -58,14 +58,14 @@ router.post("/signup", async (req, res) => {
 router.get("/auth", (req, res) => {
   const readToken = req.rawHeaders.filter((data) =>
     data.startsWith("accessToken")
-  )?.[0];
+  );
 
-  if (readToken === "1") {
+  if (readToken[0] === "1") {
     res.json({ result: false, isLogin: false });
   } else {
-    const token = readToken.split("; ");
+    const token = readToken[0].split("; ");
     try {
-      const accessToken = token
+      const accessToken = token[0]
         .find((row) => row.startsWith("accessToken"))
         .split("=");
 
@@ -84,7 +84,7 @@ router.get("/auth", (req, res) => {
       }
     } catch (err) {
       if (err.name === "TokenExpiredError") {
-        const refreshToken = token
+        const refreshToken = token[1]
           .find((row) => row.startsWith("refreshToken"))
           .split("=");
         try {

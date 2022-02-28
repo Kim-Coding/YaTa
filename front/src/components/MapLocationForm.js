@@ -13,6 +13,8 @@ const MapLocationForm = ({ currentAddress }) => {
     setDestination(address);
   };
 
+  const requestCall = () => {};
+
   return (
     <Box
       component="form"
@@ -25,7 +27,7 @@ const MapLocationForm = ({ currentAddress }) => {
     >
       <span style={{ display: "flex", alignItems: "center" }}>
         현위치&nbsp;
-        <Input defaultValue={currentAddress} id="departure" />
+        <Input value={currentAddress} id="departure" />
       </span>
       <span style={{ display: "flex", alignItems: "center" }}>
         목적지&nbsp;
@@ -37,6 +39,9 @@ const MapLocationForm = ({ currentAddress }) => {
           </Box>
         </Modal>
       </span>
+      <Button variant="contained" onClick={requestCall}>
+        콜 잡아~
+      </Button>
     </Box>
   );
 };
