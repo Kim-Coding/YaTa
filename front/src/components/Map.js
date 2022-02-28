@@ -7,6 +7,7 @@ const Map = () => {
   const [currentAddress, setCurrentAddress] = useState(
     "경기도 성남시 분당구 불정로 6 그린팩토리"
   );
+  const [destinationAddress, setDestinationAddress] = useState("");
   const [lat, setLat] = useState(37.3595704);
   const [lon, setLon] = useState(127.105399);
 
@@ -33,6 +34,11 @@ const Map = () => {
     infowindow.open(map, marker);
   };
 
+  //목적지 설정
+  const setDestination = (address) => {
+    setDestinationAddress(address);
+  };
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -42,6 +48,8 @@ const Map = () => {
       });
     }
   }, []);
+
+  useEffect(() => {}, [destinationAddress]);
 
   useEffect(() => {
     //맵생성
@@ -74,7 +82,11 @@ const Map = () => {
         }}
       ></div>
       <br></br>
-      <MapLocationForm currentAddress={currentAddress} />
+      <MapLocationForm
+        currentAddress={currentAddress}
+        destinationAddress={destinationAddress}
+        setDestination={setDestination}
+      />
     </>
   );
 };

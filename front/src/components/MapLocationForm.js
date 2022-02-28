@@ -2,9 +2,12 @@ import React, { useState } from "react";
 import { Box, Input, Modal, Button } from "@mui/material";
 import Postcode from "./Postcode";
 
-const MapLocationForm = ({ currentAddress }) => {
+const MapLocationForm = ({
+  currentAddress,
+  destinationAddress,
+  setDestination,
+}) => {
   const [open, setOpen] = useState(false);
-  const [destination, setDestination] = useState("");
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -31,7 +34,7 @@ const MapLocationForm = ({ currentAddress }) => {
       </span>
       <span style={{ display: "flex", alignItems: "center" }}>
         목적지&nbsp;
-        <Input value={destination} id="destination" />
+        <Input value={destinationAddress} id="destination" />
         <Button onClick={handleOpen}>검색</Button>
         <Modal open={open} onClose={handleClose}>
           <Box>
