@@ -1,76 +1,57 @@
 import React, { useEffect, useState } from "react";
 import MapLocationForm from "./MapLocationForm";
+import request from "../utils/serverAxios";
 
-const { kakao } = window;
+const { naver } = window;
 
 const Map = () => {
-  const [currentAddress, setCurrentAddress] = useState(
-    "경기도 성남시 분당구 불정로 6 그린팩토리"
-  );
-  const [destinationAddress, setDestinationAddress] = useState("");
-  const [lat, setLat] = useState(37.3595704);
-  const [lon, setLon] = useState(127.105399);
+  const [latlon, setLatLon] = useState([37.3595704, 127.105399]);
 
-  //좌표를 주소로
-  const geocoder = new kakao.maps.services.Geocoder();
-  const searchDetailAddrFromCoords = () => {
-    geocoder.coord2Address(lon, lat, (result, status) => {
-      if (status === kakao.maps.services.Status.OK) {
-        setCurrentAddress(result[0].address.address_name);
-      }
+  const setDirection = async (desCoords) => {
+    const result = await request.post({
+      data: { cur: [latlon[1], latlon[0]], des: [desCoords[0], desCoords[1]] },
+      uri: "/api/naver",
     });
+    const { route } = result.data.result;
   };
 
-  //마커, 인포윈도우 생성
+  // 마커, 인포윈도우 생성
   const setMarkerInfoWindow = (position, map) => {
-    const marker = new kakao.maps.Marker({
+    const marker = new naver.maps.Marker({
       position: position,
+      map: map,
     });
-    const infowindow = new kakao.maps.InfoWindow({
+    const infowindow = new naver.maps.InfoWindow({
       position: position,
       content: '<div style="padding:5px;">현위치</div>',
     });
-    marker.setMap(map);
     infowindow.open(map, marker);
-  };
-
-  //목적지 설정
-  const setDestination = (address) => {
-    setDestinationAddress(address);
   };
 
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        setLat(position.coords.latitude);
-        setLon(position.coords.longitude);
-        searchDetailAddrFromCoords();
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        setLatLon([lat, lon]);
       });
     }
   }, []);
 
-  useEffect(() => {}, [destinationAddress]);
-
   useEffect(() => {
     //맵생성
-    const container = document.getElementById("map");
-    const options = {
-      center: new kakao.maps.LatLng(lat, lon),
-      level: 2,
+    const mapOptions = {
+      center: new naver.maps.LatLng(latlon[0], latlon[1]),
+      zoom: 19,
     };
-    const map = new kakao.maps.Map(container, options);
+    const map = new naver.maps.Map("map", mapOptions);
 
-    setMarkerInfoWindow(new kakao.maps.LatLng(lat, lon), map);
-    searchDetailAddrFromCoords();
+    setMarkerInfoWindow(new naver.maps.LatLng(latlon[0], latlon[1]), map);
 
-    // 마우스 드래그로 지도 이동이 완료되었을 때
-    kakao.maps.event.addListener(map, "dragend", () => {
-      const latlng = map.getCenter();
-      setLat(latlng.getLat());
-      setLon(latlng.getLng());
-      searchDetailAddrFromCoords();
+    map.addListener("click", (e) => {
+      setLatLon([e.coord.y, e.coord.x]);
     });
-  }, [lat, lon, currentAddress]);
+  }, [latlon]);
 
   return (
     <>
@@ -82,11 +63,7 @@ const Map = () => {
         }}
       ></div>
       <br></br>
-      <MapLocationForm
-        currentAddress={currentAddress}
-        destinationAddress={destinationAddress}
-        setDestination={setDestination}
-      />
+      <MapLocationForm latlon={latlon} setDirection={setDirection} />
     </>
   );
 };

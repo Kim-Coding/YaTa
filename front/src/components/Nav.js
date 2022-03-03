@@ -1,6 +1,6 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { removeToken } from "../utils/token";
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 
 import {
   AppBar,
@@ -16,9 +16,11 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 const Nav = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
 
   const logout = () => {
-    removeToken();
+    removeCookie("accessToken");
+    removeCookie("refreshToken");
     navigate("/");
   };
 

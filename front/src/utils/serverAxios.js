@@ -13,6 +13,7 @@ const request = {
       const response = await instance().post(uri, data);
       return response;
     } catch (err) {
+      console.log(err);
       const { data: error } = err.response;
 
       throw new Error(error.message);
