@@ -31,6 +31,8 @@ const Auth = (SpecificComponent) => {
           default:
         }
       } else {
+        removeCookie("accessToken");
+        removeCookie("refreshToken");
         navigate("/");
       }
     } catch (err) {

@@ -1,70 +1,69 @@
-import React, { useEffect, useState } from "react";
-import MapLocationForm from "./MapLocationForm";
-import request from "../utils/serverAxios";
+import React, { useEffect } from "react";
 
 const { naver } = window;
 
-const Map = () => {
-  const [latlon, setLatLon] = useState([37.3595704, 127.105399]);
-
-  const setDirection = async (desCoords) => {
-    const result = await request.post({
-      data: { cur: [latlon[1], latlon[0]], des: [desCoords[0], desCoords[1]] },
-      uri: "/api/naver",
-    });
-    const { route } = result.data.result;
-  };
-
+const Map = ({ curLatLon, setCurLatLon, path, desLatLon }) => {
   // 마커, 인포윈도우 생성
-  const setMarkerInfoWindow = (position, map) => {
+  const setMarkerInfoWindow = (position, map, location) => {
     const marker = new naver.maps.Marker({
       position: position,
       map: map,
     });
     const infowindow = new naver.maps.InfoWindow({
       position: position,
-      content: '<div style="padding:5px;">현위치</div>',
+      content: `<div style="padding:5px;">${location}</div>`,
     });
     infowindow.open(map, marker);
   };
 
   useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
-        setLatLon([lat, lon]);
-      });
-    }
-  }, []);
-
-  useEffect(() => {
     //맵생성
     const mapOptions = {
-      center: new naver.maps.LatLng(latlon[0], latlon[1]),
+      center: new naver.maps.LatLng(curLatLon[0], curLatLon[1]),
       zoom: 19,
+      scaleControl: false,
+      logoControl: false,
+      mapDataControl: false,
+      zoomControl: true,
+      minZoom: 8,
+      disableKineticPan: false,
     };
     const map = new naver.maps.Map("map", mapOptions);
 
-    setMarkerInfoWindow(new naver.maps.LatLng(latlon[0], latlon[1]), map);
+    setMarkerInfoWindow(
+      new naver.maps.LatLng(curLatLon[0], curLatLon[1]),
+      map,
+      "현위치"
+    );
 
     map.addListener("click", (e) => {
-      setLatLon([e.coord.y, e.coord.x]);
+      setCurLatLon([e.coord.y, e.coord.x]);
     });
-  }, [latlon]);
+
+    if (path) {
+      const polyline = new naver.maps.Polyline({
+        map: map,
+        path: path,
+        strokeColor: "#ff0000",
+        strokeWeight: 3,
+      });
+      const center = new naver.maps.LatLng(
+        (parseFloat(curLatLon[0]) + parseFloat(desLatLon[0])) / 2,
+        (parseFloat(curLatLon[1]) + parseFloat(desLatLon[1])) / 2
+      );
+      map.setCenter(center);
+      map.setZoom(14, true);
+    }
+  }, [curLatLon, path]);
 
   return (
-    <>
-      <div
-        id="map"
-        style={{
-          width: "100vw",
-          height: "100vh",
-        }}
-      ></div>
-      <br></br>
-      <MapLocationForm latlon={latlon} setDirection={setDirection} />
-    </>
+    <div
+      id="map"
+      style={{
+        width: "100vw",
+        height: "100vh",
+      }}
+    ></div>
   );
 };
 
