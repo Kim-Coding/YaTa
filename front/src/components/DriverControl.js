@@ -11,7 +11,7 @@ import {
 
 const DriverControl = () => {
   const [isWork, setIsWork] = useState(false);
-  const [orderData, setOrderData] = useState(true);
+  const [orderData, setOrderData] = useState(false);
 
   const changeIsWork = () => {
     setIsWork(!isWork);

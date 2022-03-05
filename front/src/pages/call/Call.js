@@ -17,6 +17,8 @@ const Call = () => {
   const [path, setPath] = useState();
   const [pathData, setPathData] = useState();
 
+  const [isCall, setIsCall] = useState(false);
+
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
@@ -89,14 +91,18 @@ const Call = () => {
         desLatLon={desLatLon}
       />
       <br></br>
-      <MapLocationForm
-        curLatLon={curLatLon}
-        searchDetailCoordsrFromAdd={searchDetailCoordsrFromAdd}
-        searchDetailAddrFromCoords={searchDetailAddrFromCoords}
-        currentAddress={currentAddress}
-        destinationAddress={destinationAddress}
-        pathData={pathData}
-      />
+      {isCall ? (
+        "콜잡는 중"
+      ) : (
+        <MapLocationForm
+          curLatLon={curLatLon}
+          searchDetailCoordsrFromAdd={searchDetailCoordsrFromAdd}
+          searchDetailAddrFromCoords={searchDetailAddrFromCoords}
+          currentAddress={currentAddress}
+          destinationAddress={destinationAddress}
+          pathData={pathData}
+        />
+      )}
     </StyledDiv>
   );
 };
