@@ -11,8 +11,8 @@ const App = () => {
   return (
     <CookiesProvider>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/signup" element={<Signup />} />
+        <Route path="/" element={Auth(Home)} />
+        <Route path="/signup" element={Auth(Signup)} />
 
         <Route element={<Nav />}>
           <Route path="/call" element={Auth(Call)} />)

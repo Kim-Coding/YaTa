@@ -1,128 +1,97 @@
 const User = require("../models/User");
-const jwt = require("jsonwebtoken");
 const express = require("express");
 const router = express.Router();
 const { encryptPassword, isComparedPassword } = require("../utils/bcrypt");
+const {
+  makeAccessToken,
+  makeRefreshToken,
+  verifyAccessToken,
+  verifyRefreshToken,
+} = require("../utils/token");
 require("dotenv").config();
 
 router.post("/signin", async (req, res) => {
-  try {
-    await User.findOne({ id: req.body.id }).then((data) => {
-      if (isComparedPassword(req.body.pw, data.pw)) {
-        const accessToken = jwt.sign(
-          {
-            id: data.id,
-            userType: data.userType,
-          },
-          process.env.SECRET_KEY,
-          {
-            expiresIn: "1h",
-          }
-        );
-        const refreshToken = data.refreshToken;
-        res.status(201).json({
-          result: true,
-          userType: data.userType,
-          accessToken,
-          refreshToken,
-        });
-      } else {
-        res.json({ result: false });
-      }
+  const reqId = req.body.id;
+  const reqPw = req.body.pw;
+  const userData = await User.findOne({ id: reqId });
+
+  if (isComparedPassword(reqPw, userData.pw)) {
+    const accessToken = await makeAccessToken(userData.id, userData.userType);
+    const refreshToken = userData.refreshToken;
+    res.status(201).json({
+      result: true,
+      userType: userData.userType,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
     });
-  } catch (err) {
-    console.error(err);
+  } else {
+    res.json({ result: false });
   }
 });
 
 router.post("/signup", async (req, res) => {
-  const user = { id: req.body.id, userType: req.body.userType };
-  await User.findOne(user).then((data) => {
-    if (data) {
-      res.status(401).json({ message: "Exist User" });
-    } else {
-      const refreshToken = jwt.sign({}, process.env.REFRESH_KEY, {
-        expiresIn: "7d",
-      });
-      new User({
-        id: req.body.id,
-        pw: encryptPassword(req.body.pw),
-        userType: req.body.userType,
-        refreshToken: refreshToken,
-      }).save();
-      res.json({ signupSuccess: true });
-    }
-  });
+  const reqId = req.body.id;
+  const reqPw = req.body.pw;
+  const reqUserType = req.body.userType;
+  const userData = await User.findOne({ id: reqId, userType: reqUserType });
+
+  if (userData) {
+    res.status(401).json({ message: "Exist User" });
+  } else {
+    const refreshToken = await makeRefreshToken();
+    new User({
+      id: reqId,
+      pw: encryptPassword(reqPw),
+      userType: reqUserType,
+      refreshToken: refreshToken,
+    }).save();
+    res.json({ result: true });
+  }
 });
 
-router.get("/auth", (req, res) => {
-  const readToken = req.rawHeaders[29];
-
-  if (readToken === "1") {
-    res.json({ result: false, isLogin: false });
+router.get("/auth", async (req, res) => {
+  const readToken = req.rawHeaders.filter((ele) =>
+    ele.startsWith("accessToken")
+  );
+  if (readToken[0] === undefined) {
+    res.json({ result: false });
   } else {
-    const token = readToken.split("; ");
-    try {
-      const accessToken = token
-        .find((row) => row.startsWith("accessToken"))
-        .split("=");
+    const token = readToken[0].split("; ");
+    const accessToken = token[0].split("=");
+    const refreshToken = token[1].split("=");
+    const userData = await User.findOne({ refreshToken: refreshToken[1] });
 
-      const decodedAcessToken = jwt.verify(
-        accessToken[1],
-        process.env.SECRET_KEY
-      );
-      if (decodedAcessToken) {
-        res.json({
-          result: true,
-          isLogin: true,
-          userType: decodedAcessToken.userType,
-        });
-      } else {
-        res.status(401).json({ result: false, error: "unauthorized" });
-      }
+    try {
+      const decodedAccessToken = verifyAccessToken(accessToken[1]);
+      res.json({
+        result: true,
+        userType: decodedAccessToken.userType,
+      });
     } catch (err) {
       if (err.name === "TokenExpiredError") {
-        const refreshToken = token
-          .find((row) => row.startsWith("refreshToken"))
-          .split("=");
+        const newAccessToken = await makeAccessToken(
+          userData.id,
+          userData.userType
+        );
         try {
-          const decodedRefreshToken = jwt.verify(
-            refreshToken[1],
-            process.env.REFRESH_KEY
-          );
-          if (decodedRefreshToken) {
-            User.findOne({ refreshToken: refreshToken[1] }).then((data) => {
-              const newAccessToken = jwt.sign(
-                {
-                  id: data.id,
-                  userType: data.userType,
-                },
-                process.env.SECRET_KEY,
-                {
-                  expiresIn: "1h",
-                }
-              );
-              res.json({
-                result: true,
-                userType: data.userType,
-                accessToken: newAccessToken,
-              });
+          if (verifyRefreshToken(refreshToken[1])) {
+            res.json({
+              result: true,
+              userType: userData.userType,
+              accessToken: newAccessToken,
             });
-          } else {
-            res.json({ result: false, error: "unauthorized" });
           }
-        } catch (e) {
+        } catch (err) {
           if (err.name === "TokenExpiredError") {
-            const newRefreshToken = jwt.sign({}, process.env.REFRESH_KEY, {
-              expiresIn: "7d",
-            });
+            const newRefreshToken = await makeRefreshToken();
             User.findOneAndUpdate(
               { refreshToken: refreshToken[1] },
               { $set: { refreshToken: newRefreshToken } }
             );
             res.json({
               result: true,
-              userType: data.userType,
+              userType: userData.userType,
+              accessToken: newAccessToken,
               refreshToken: newRefreshToken,
             });
           }

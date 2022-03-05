@@ -1,12 +1,10 @@
 import { Link, useNavigate } from "react-router-dom";
 import React, { useState } from "react";
+import { useCookies } from "react-cookie";
 
 import StyledDiv from "../../components/layout/StyledDiv";
 import StyledForm from "../../components/layout/StyleForm";
-import request from "../../utils/axios";
-import { setToken } from "../../utils/token";
-
-import { useForm } from "react-hook-form";
+import request from "../../utils/serverAxios";
 
 const initialInputs = {
   id: "",
@@ -17,6 +15,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [inputs, setInputs] = useState(initialInputs);
   const { id, pw } = inputs;
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
 
   const onChangeInput = (e) => {
     const { name, value } = e.target;
@@ -31,12 +30,11 @@ const Home = () => {
         data: { id, pw },
       });
       const { accessToken, refreshToken, userType } = result.data;
-
-      setToken("accessToken", accessToken);
-      setToken("refreshToken", refreshToken);
+      setCookie("accessToken", accessToken);
+      setCookie("refreshToken", refreshToken);
       userType === "일반인" ? navigate("/call") : navigate("/driver");
     } catch (err) {
-      alert(err);
+      console.log(err);
     }
   };
 

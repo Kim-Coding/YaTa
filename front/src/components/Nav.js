@@ -1,22 +1,26 @@
 import { Outlet, useNavigate } from "react-router-dom";
-import { removeToken } from "../utils/token";
 import { useState } from "react";
+import { useCookies } from "react-cookie";
 
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
+import {
+  AppBar,
+  Box,
+  Toolbar,
+  Typography,
+  IconButton,
+  MenuItem,
+  Menu,
+} from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import MenuItem from "@mui/material/MenuItem";
-import Menu from "@mui/material/Menu";
 
 const Nav = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
+  const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
 
   const logout = () => {
-    removeToken();
+    removeCookie("accessToken");
+    removeCookie("refreshToken");
     navigate("/");
   };
 
@@ -34,7 +38,7 @@ const Nav = () => {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 1, width: "100vw" }}>
         <AppBar position="static">
           <Toolbar>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>

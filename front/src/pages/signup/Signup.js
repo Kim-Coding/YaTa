@@ -2,9 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import StyledDiv from "../../components/layout/StyledDiv";
 import StyledForm from "../../components/layout/StyleForm";
-import request from "../../utils/axios";
-
-import { useForm } from "react-hook-form";
+import request from "../../utils/serverAxios";
 
 const initialInputs = {
   id: "",
@@ -20,7 +18,6 @@ const Signup = () => {
 
   const onChangeInput = (e) => {
     const { name, value } = e.target;
-    console.log(name, value);
     setInputs({ ...inputs, [name]: value });
   };
 
@@ -31,7 +28,7 @@ const Signup = () => {
         uri: "/api/user/signup",
         data: { id, pw, userType },
       });
-      if (result.data.signupSuccess) {
+      if (result.data.result) {
         alert("회원가입에 성공하셨습니다. 로그인 후 이용해 주세요");
         navigate("/");
       }

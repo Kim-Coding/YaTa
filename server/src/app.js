@@ -3,6 +3,7 @@ const dotenv = require("dotenv");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const user = require("./middlewares/user");
+const naver = require("./middlewares/naver");
 const cors = require("cors");
 dotenv.config();
 
@@ -23,6 +24,7 @@ mongoose
     console.log(err);
   });
 
+app.use("/api/naver", naver);
 app.use("/api/user", user);
 
 app.set("port", process.env.PORT || 8000);
