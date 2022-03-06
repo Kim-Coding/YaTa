@@ -16,11 +16,12 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 const Nav = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
-  const [cookies, setCookie, removeCookie] = useCookies(["cookie-name"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
 
   const logout = () => {
     removeCookie("accessToken");
     removeCookie("refreshToken");
+    removeCookie("userId");
     navigate("/");
   };
 

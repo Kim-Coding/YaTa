@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
 import request from "../../utils/serverAxios";
+import { io } from "socket.io-client";
+import { useCookies } from "react-cookie";
 
 import StyledDiv from "../../components/layout/StyledDiv";
 import Map from "../../components/Map";
 import MapLocationForm from "../../components/MapLocationForm";
+import { Button } from "@mui/material";
 
 const { naver } = window;
+const socket = io("http://localhost:8080");
 
 const Call = () => {
   const [curLatLon, setCurLatLon] = useState([37.3595704, 127.105399]);
@@ -16,7 +20,7 @@ const Call = () => {
   const [destinationAddress, setDestinationAddress] = useState("");
   const [path, setPath] = useState();
   const [pathData, setPathData] = useState();
-
+  const [cookies, setCookie, removeCookie] = useCookies(["token"]);
   const [isCall, setIsCall] = useState(false);
 
   useEffect(() => {
@@ -25,19 +29,58 @@ const Call = () => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
         setCurLatLon([lat, lon]);
+        setCurrentAddress(
+          searchDetailAddrFromCoords(curLatLon[0], curLatLon[1])
+        );
       });
     }
   }, []);
 
+  useEffect(() => {
+    setCurrentAddress(searchDetailAddrFromCoords(curLatLon[0], curLatLon[1]));
+  }, [curLatLon]);
+
+  //매칭성공
+  socket.on("successMatching", (text) => {
+    console.log(text);
+  });
+
+  const submitCall = () => {
+    setIsCall(true);
+    socket.emit("clientCall", {
+      socketId: socket.id,
+      id: cookies.userId,
+      userType: cookies.userType,
+      startLatLon: curLatLon,
+      startAddress: currentAddress,
+      destinationLatLon: desLatLon,
+      destinationAddress: destinationAddress,
+      status: "waiting",
+    });
+  };
+
+  const cancelCall = () => {
+    setIsCall(false);
+    socket.emit("cancelCall", {
+      id: cookies.userId,
+      userType: cookies.userType,
+      startLatLon: curLatLon,
+      startAddress: currentAddress,
+      destinationLatLon: desLatLon,
+      destinationAddress: destinationAddress,
+      status: "canceled",
+    });
+  };
+
   //경로 요청
   const setDirection = async (desCoords) => {
-    setDesLatLon([desCoords[1], desCoords[0]]);
+    setDesLatLon([parseFloat(desCoords[1]), parseFloat(desCoords[0])]);
     const result = await request.post({
       data: {
         cur: [curLatLon[1], curLatLon[0]],
         des: [desCoords[0], desCoords[1]],
       },
-      uri: "/api/naver",
+      uri: "/api/naver/direction",
     });
     const { path, summary } = result.data.result.route.traavoidtoll[0];
     const { duration, taxiFare, distance } = summary;
@@ -92,7 +135,10 @@ const Call = () => {
       />
       <br></br>
       {isCall ? (
-        "콜잡는 중"
+        <>
+          "콜잡는 중"
+          <Button onClick={cancelCall}>콜 취소</Button>
+        </>
       ) : (
         <MapLocationForm
           curLatLon={curLatLon}
@@ -101,6 +147,7 @@ const Call = () => {
           currentAddress={currentAddress}
           destinationAddress={destinationAddress}
           pathData={pathData}
+          submitCall={submitCall}
         />
       )}
     </StyledDiv>

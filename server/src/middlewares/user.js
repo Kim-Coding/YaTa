@@ -11,15 +11,15 @@ const {
 require("dotenv").config();
 
 router.post("/signin", async (req, res) => {
-  const reqId = req.body.id;
-  const reqPw = req.body.pw;
-  const userData = await User.findOne({ id: reqId });
+  const { id, pw } = req.body;
+  const userData = await User.findOne({ id: id });
 
-  if (isComparedPassword(reqPw, userData.pw)) {
+  if (isComparedPassword(pw, userData.pw)) {
     const accessToken = await makeAccessToken(userData.id, userData.userType);
     const refreshToken = userData.refreshToken;
     res.status(201).json({
       result: true,
+      userId: userData.id,
       userType: userData.userType,
       accessToken: accessToken,
       refreshToken: refreshToken,
@@ -30,19 +30,17 @@ router.post("/signin", async (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
-  const reqId = req.body.id;
-  const reqPw = req.body.pw;
-  const reqUserType = req.body.userType;
-  const userData = await User.findOne({ id: reqId, userType: reqUserType });
+  const { id, pw, userType } = req.body;
+  const userData = await User.findOne({ id: id, userType: userType });
 
   if (userData) {
     res.status(401).json({ message: "Exist User" });
   } else {
     const refreshToken = await makeRefreshToken();
     new User({
-      id: reqId,
-      pw: encryptPassword(reqPw),
-      userType: reqUserType,
+      id: id,
+      pw: encryptPassword(pw),
+      userType: userType,
       refreshToken: refreshToken,
     }).save();
     res.json({ result: true });

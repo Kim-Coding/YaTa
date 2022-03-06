@@ -29,9 +29,11 @@ const Home = () => {
         uri: "/api/user/signin",
         data: { id, pw },
       });
-      const { accessToken, refreshToken, userType } = result.data;
+      const { accessToken, refreshToken, userType, userId } = result.data;
       setCookie("accessToken", accessToken);
       setCookie("refreshToken", refreshToken);
+      setCookie("userType", userType);
+      setCookie("userId", userId);
       userType === "일반인" ? navigate("/call") : navigate("/driver");
     } catch (err) {
       console.log(err);

@@ -6,17 +6,22 @@ import Call from "./pages/call";
 import Auth from "./hoc/Auth";
 import Driver from "./pages/driver";
 import Nav from "./components/Nav";
+import Chatting from "./pages/chatting";
 
 const App = () => {
+  const AuthCallPage = Auth(Call);
+  const AuthDriverPage = Auth(Driver);
+
   return (
     <CookiesProvider>
       <Routes>
-        <Route path="/" element={Auth(Home)} />
-        <Route path="/signup" element={Auth(Signup)} />
+        <Route path="/" element={<Home />} />
+        <Route path="/signup" element={<Signup />} />
 
         <Route element={<Nav />}>
-          <Route path="/call" element={Auth(Call)} />)
-          <Route path="/driver" element={Auth(Driver)} />)
+          <Route path="/chatting" element={<Chatting />} />
+          <Route path="/call" element={<AuthCallPage />} />)
+          <Route path="/driver" element={<AuthDriverPage />} />)
         </Route>
       </Routes>
     </CookiesProvider>

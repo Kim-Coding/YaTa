@@ -9,6 +9,7 @@ const MapLocationForm = ({
   currentAddress,
   destinationAddress,
   pathData,
+  submitCall,
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -18,7 +19,6 @@ const MapLocationForm = ({
     handleClose();
     searchDetailCoordsrFromAdd(desAddress);
   };
-  const submitCall = () => {};
 
   useEffect(() => {
     searchDetailAddrFromCoords(curLatLon[0], curLatLon[1]);
@@ -57,7 +57,7 @@ const MapLocationForm = ({
             }km`
           : ""}
       </span>
-      <Button variant="contained" onClick={submitCall}>
+      <Button type="submit" variant="contained" onClick={submitCall}>
         콜 잡아~
       </Button>
     </Box>
