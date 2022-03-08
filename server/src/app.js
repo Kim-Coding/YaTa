@@ -7,7 +7,7 @@ const naver = require("./middlewares/naver");
 const call = require("./middlewares/call");
 const cors = require("cors");
 const app = express();
-const io = require("./socket/socket");
+const ws = require("./socket/socket");
 
 dotenv.config();
 
@@ -35,3 +35,5 @@ app.set("port", process.env.PORT || 8000);
 app.listen(app.get("port"), () => {
   console.log(`app is running at ${app.get("port")}`);
 });
+
+ws(app);

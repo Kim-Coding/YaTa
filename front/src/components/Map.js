@@ -19,7 +19,7 @@ const Map = ({ curLatLon, setCurLatLon, path, desLatLon }) => {
   useEffect(() => {
     //맵생성
     const mapOptions = {
-      center: new naver.maps.LatLng(curLatLon[0], curLatLon[1]),
+      center: new naver.maps.LatLng(curLatLon.lat, curLatLon.lon),
       zoom: 19,
       scaleControl: false,
       logoControl: false,
@@ -31,13 +31,15 @@ const Map = ({ curLatLon, setCurLatLon, path, desLatLon }) => {
     const map = new naver.maps.Map("map", mapOptions);
 
     setMarkerInfoWindow(
-      new naver.maps.LatLng(curLatLon[0], curLatLon[1]),
+      new naver.maps.LatLng(curLatLon.lat, curLatLon.lon),
       map,
       "현위치"
     );
 
     map.addListener("click", (e) => {
-      setCurLatLon([e.coord.y, e.coord.x]);
+      const lat = e.coord.y;
+      const lon = e.coord.x;
+      setCurLatLon({ lat: lat, lon: lon });
     });
 
     if (path) {
@@ -48,8 +50,8 @@ const Map = ({ curLatLon, setCurLatLon, path, desLatLon }) => {
         strokeWeight: 3,
       });
       const center = new naver.maps.LatLng(
-        (parseFloat(curLatLon[0]) + parseFloat(desLatLon[0])) / 2,
-        (parseFloat(curLatLon[1]) + parseFloat(desLatLon[1])) / 2
+        (parseFloat(curLatLon.lat) + parseFloat(desLatLon.lat)) / 2,
+        (parseFloat(curLatLon.lon) + parseFloat(desLatLon.lon)) / 2
       );
       map.setCenter(center);
       map.setZoom(14, true);

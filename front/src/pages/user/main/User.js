@@ -1,18 +1,24 @@
 import { useState, useEffect } from "react";
-import request from "../../utils/serverAxios";
+import request from "../../../utils/serverAxios";
 import { io } from "socket.io-client";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
 
-import StyledDiv from "../../components/layout/StyledDiv";
-import Map from "../../components/Map";
-import MapLocationForm from "../../components/MapLocationForm";
+import StyledDiv from "../../../components/layout/StyledDiv";
+import Map from "../../../components/Map";
+import MapLocationForm from "../../../components/MapLocationForm";
 import { Button } from "@mui/material";
 
 const { naver } = window;
+
 const socket = io("http://localhost:8080");
 
-const Call = () => {
-  const [curLatLon, setCurLatLon] = useState([37.3595704, 127.105399]);
+const User = () => {
+  const navigate = useNavigate();
+  const [curLatLon, setCurLatLon] = useState({
+    lat: 37.3595704,
+    lon: 127.105399,
+  });
   const [currentAddress, setCurrentAddress] = useState(
     "경기도 성남시 분당구 불정로 6 그린팩토리"
   );
@@ -28,24 +34,26 @@ const Call = () => {
       navigator.geolocation.getCurrentPosition((position) => {
         const lat = position.coords.latitude;
         const lon = position.coords.longitude;
-        setCurLatLon([lat, lon]);
+        setCurLatLon({ lat: lat, lon: lon });
         setCurrentAddress(
-          searchDetailAddrFromCoords(curLatLon[0], curLatLon[1])
+          searchDetailAddrFromCoords(curLatLon.lat, curLatLon.lon)
         );
       });
     }
+    //매칭성공
+    socket.on("successMatching", (bool) => {
+      if (bool) {
+        navigate("/user/waiting");
+      }
+    });
   }, []);
 
   useEffect(() => {
-    setCurrentAddress(searchDetailAddrFromCoords(curLatLon[0], curLatLon[1]));
+    setCurrentAddress(searchDetailAddrFromCoords(curLatLon.lat, curLatLon.lon));
   }, [curLatLon]);
 
-  //매칭성공
-  socket.on("successMatching", (text) => {
-    console.log(text);
-  });
-
-  const submitCall = () => {
+  const submitCall = (e) => {
+    e.preventDefault();
     setIsCall(true);
     socket.emit("clientCall", {
       socketId: socket.id,
@@ -59,32 +67,40 @@ const Call = () => {
     });
   };
 
-  const cancelCall = () => {
-    setIsCall(false);
-    socket.emit("cancelCall", {
-      id: cookies.userId,
-      userType: cookies.userType,
-      startLatLon: curLatLon,
-      startAddress: currentAddress,
-      destinationLatLon: desLatLon,
-      destinationAddress: destinationAddress,
-      status: "canceled",
+  const cancelCall = async () => {
+    const result = await request.post({
+      uri: "/api/call/cancel",
+      data: {
+        id: cookies.userId,
+        userType: cookies.userType,
+        startLatLon: curLatLon,
+        startAddress: currentAddress,
+        destinationLatLon: desLatLon,
+        destinationAddress: destinationAddress,
+        status: "canceled",
+      },
     });
+    if (result.data.result) {
+      setIsCall(false);
+    } else console.log("콜취소 안됨");
   };
 
   //경로 요청
   const setDirection = async (desCoords) => {
-    setDesLatLon([parseFloat(desCoords[1]), parseFloat(desCoords[0])]);
+    setDesLatLon({
+      lon: desCoords.lon,
+      lat: desCoords.lat,
+    });
     const result = await request.post({
       data: {
-        cur: [curLatLon[1], curLatLon[0]],
-        des: [desCoords[0], desCoords[1]],
+        cur: [curLatLon.lon, curLatLon.lat],
+        des: [desCoords.lon, desCoords.lat],
       },
       uri: "/api/naver/direction",
     });
     const { path, summary } = result.data.result.route.traavoidtoll[0];
     const { duration, taxiFare, distance } = summary;
-    setPathData([duration, taxiFare, distance]);
+    setPathData({ duration: duration, taxiFare: taxiFare, distance: distance });
     setPath(path);
   };
 
@@ -100,7 +116,7 @@ const Call = () => {
           return alert("Something wrong!");
         }
         const data = response.v2.addresses[0];
-        setDirection([data.x, data.y]);
+        setDirection({ lon: data.x, lat: data.y });
       }
     );
   };
@@ -154,4 +170,4 @@ const Call = () => {
   );
 };
 
-export default Call;
+export default User;

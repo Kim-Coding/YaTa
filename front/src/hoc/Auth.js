@@ -24,11 +24,16 @@ const Auth = (SpecificComponent) => {
             setCookie("refreshToken", refreshToken);
           }
           switch (userType) {
-            case "일반인":
-              navigate("/call");
+            case "user":
+              if (window.location.pathname.startsWith("/driver")) {
+                navigate("/user");
+              }
               break;
-            case "드라이버":
-              navigate("/driver");
+
+            case "driver":
+              if (window.location.pathname.startsWith("/user")) {
+                navigate("/driver");
+              }
               break;
             default:
           }

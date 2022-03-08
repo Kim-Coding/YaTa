@@ -4,7 +4,6 @@ const orderSchema = mongoose.Schema({
   userId: {
     type: String,
     trim: true,
-    unique: 1,
   },
   userType: {
     type: String,
@@ -23,10 +22,10 @@ const orderSchema = mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["waiting", "driving"],
   },
   socketId: {
     type: String,
+    nuique: true,
   },
 });
 

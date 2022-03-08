@@ -22,6 +22,7 @@ const Nav = () => {
     removeCookie("accessToken");
     removeCookie("refreshToken");
     removeCookie("userId");
+    removeCookie("userType");
     navigate("/");
   };
 

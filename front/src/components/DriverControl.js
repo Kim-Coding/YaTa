@@ -26,10 +26,12 @@ const DriverControl = ({
         >
           <List>
             <ListItem disablePadding>
-              <ListItemText primary={`출발지 : ${orderData[0]}`} />
+              <ListItemText primary={`출발지 : ${orderData.startAddress}`} />
             </ListItem>
             <ListItem disablePadding>
-              <ListItemText primary={`목적지 : ${orderData[1]}`} />
+              <ListItemText
+                primary={`목적지 : ${orderData.destinationAddress}`}
+              />
             </ListItem>
           </List>
           <Button onClick={clickRefuse} variant="contained" color="secondary">

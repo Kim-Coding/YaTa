@@ -21,7 +21,7 @@ const MapLocationForm = ({
   };
 
   useEffect(() => {
-    searchDetailAddrFromCoords(curLatLon[0], curLatLon[1]);
+    searchDetailAddrFromCoords(curLatLon.lat, curLatLon.lon);
   }, [curLatLon]);
 
   return (
@@ -51,9 +51,9 @@ const MapLocationForm = ({
       <span style={{ display: "flex", justifyContent: "center" }}>
         {pathData
           ? `소요시간 : ${Math.round(
-              parseInt(pathData[0]) / 60000
-            )}분 / 택시요금 : ${pathData[1]} / 거리 : ${
-              parseInt(pathData[2]) / 1000
+              parseInt(pathData.duration) / 60000
+            )}분 / 택시요금 : ${pathData.taxiFare} / 거리 : ${
+              parseInt(pathData.distance) / 1000
             }km`
           : ""}
       </span>

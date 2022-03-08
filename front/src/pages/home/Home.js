@@ -30,11 +30,12 @@ const Home = () => {
         data: { id, pw },
       });
       const { accessToken, refreshToken, userType, userId } = result.data;
+
       setCookie("accessToken", accessToken);
       setCookie("refreshToken", refreshToken);
       setCookie("userType", userType);
       setCookie("userId", userId);
-      userType === "일반인" ? navigate("/call") : navigate("/driver");
+      userType === "user" ? navigate("/user") : navigate("/driver");
     } catch (err) {
       console.log(err);
     }

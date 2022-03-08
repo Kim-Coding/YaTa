@@ -31,6 +31,7 @@ router.post("/signin", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   const { id, pw, userType } = req.body;
+  console.log(userType);
   const userData = await User.findOne({ id: id, userType: userType });
 
   if (userData) {
@@ -48,9 +49,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router.get("/auth", async (req, res) => {
-  const readToken = req.rawHeaders.filter((ele) =>
-    ele.startsWith("accessToken")
-  );
+  const readToken = req.rawHeaders.filter((ele) => ele.includes("accessToken"));
   if (readToken[0] === undefined) {
     res.json({ result: false });
   } else {

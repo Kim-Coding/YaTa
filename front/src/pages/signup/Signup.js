@@ -51,8 +51,8 @@ const Signup = () => {
             onChange={onChangeInput}
           />
           <select name="userType" onChange={onChangeInput}>
-            <option value="일반인">일반인</option>
-            <option value="드라이버">드라이버</option>
+            <option value="user">일반인</option>
+            <option value="driver">드라이버</option>
           </select>
           <input type="submit" onClick={onSummitSignUp} />
         </StyledForm>
