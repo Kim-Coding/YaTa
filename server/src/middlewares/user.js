@@ -31,7 +31,6 @@ router.post("/signin", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
   const { id, pw, userType } = req.body;
-  console.log(userType);
   const userData = await User.findOne({ id: id, userType: userType });
 
   if (userData) {

@@ -7,7 +7,7 @@ import request from "../../utils/serverAxios";
 const initialInputs = {
   id: "",
   pw: "",
-  userType: "일반인",
+  userType: "user",
 };
 
 const Signup = () => {

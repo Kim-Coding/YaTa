@@ -1,4 +1,3 @@
-import StyledDiv from "./layout/StyledDiv";
 import {
   Button,
   Box,
@@ -8,15 +7,15 @@ import {
   Typography,
 } from "@mui/material";
 
-const DriverControl = ({
-  changeIsWork,
+const DriverMapCallInfo = ({
+  startAddress,
+  destinationAddress,
   clickAccept,
   clickRefuse,
-  orderData,
 }) => {
   return (
-    <StyledDiv>
-      {orderData ? (
+    <>
+      {startAddress !== "" ? (
         <Box
           sx={{
             width: "100%",
@@ -26,12 +25,10 @@ const DriverControl = ({
         >
           <List>
             <ListItem disablePadding>
-              <ListItemText primary={`출발지 : ${orderData.startAddress}`} />
+              <ListItemText primary={`출발지 : ${startAddress || ""}`} />
             </ListItem>
             <ListItem disablePadding>
-              <ListItemText
-                primary={`목적지 : ${orderData.destinationAddress}`}
-              />
+              <ListItemText primary={`목적지 : ${destinationAddress || ""}`} />
             </ListItem>
           </List>
           <Button onClick={clickRefuse} variant="contained" color="secondary">
@@ -46,12 +43,8 @@ const DriverControl = ({
           콜 대기중...
         </Typography>
       )}
-      <br></br>
-      <Button onClick={changeIsWork} variant="contained" color="success">
-        퇴근하기
-      </Button>
-    </StyledDiv>
+    </>
   );
 };
 
-export default DriverControl;
+export default DriverMapCallInfo;

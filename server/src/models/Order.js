@@ -23,9 +23,12 @@ const orderSchema = mongoose.Schema({
   status: {
     type: String,
   },
-  socketId: {
+  userSocketId: {
     type: String,
     nuique: true,
+  },
+  path: {
+    type: Array,
   },
 });
 

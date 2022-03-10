@@ -6,14 +6,14 @@ import Auth from "./hoc/Auth";
 import Nav from "./components/Nav";
 import User from "./pages/user/main";
 import Driver from "./pages/driver/main";
-import UserWaiting from "./pages/user/userWaiting";
-import DriverMatching from "./pages/driver/driverMatching/DriverMatching";
+import UserGoDestination from "./pages/user/userGoDestination";
+import DriverGoDestination from "./pages/driver/driverGoDestination";
 
 const App = () => {
   const AuthUserPage = Auth(User);
-  const AuthUserWaitingPage = Auth(UserWaiting);
+  const AuthUserGoDestinationPage = Auth(UserGoDestination);
   const AuthDriverPage = Auth(Driver);
-  const AuthDriverMatchingPage = Auth(DriverMatching);
+  const AuthDriverGoDestinationPage = Auth(DriverGoDestination);
 
   return (
     <CookiesProvider>
@@ -23,9 +23,15 @@ const App = () => {
 
         <Route element={<Nav />}>
           <Route path="/user" element={<AuthUserPage />} />
-          <Route path="/user/waiting" element={<AuthUserWaitingPage />} />
+          <Route
+            path="/user/godestination"
+            element={<AuthUserGoDestinationPage />}
+          />
           <Route path="/driver" element={<AuthDriverPage />} />
-          <Route path="/driver/matching" element={<AuthDriverMatchingPage />} />
+          <Route
+            path="/driver/godestination"
+            element={<AuthDriverGoDestinationPage />}
+          />
         </Route>
       </Routes>
     </CookiesProvider>
