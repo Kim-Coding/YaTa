@@ -15,7 +15,7 @@ const DriverMapControl = ({
   const {
     startAddress,
     destinationAddress,
-    userSocketId,
+    userId,
     startLatLon,
     desLatLon,
     path,
@@ -34,7 +34,7 @@ const DriverMapControl = ({
       uri: "/api/naver/direction",
     });
 
-    const { path } = await result.data.result;
+    const { path } = result.data.result;
     setPathData({ path: path });
   };
 
@@ -43,7 +43,7 @@ const DriverMapControl = ({
     setIsMatching(true);
     const result = await request.post({
       uri: "/api/call/accept",
-      data: { userSocketId: userSocketId },
+      data: { userId: userId, driverLatLon: curLatLon },
     });
     if (result.data.result) {
       setDirection();
@@ -51,8 +51,10 @@ const DriverMapControl = ({
       setOrderData({
         startAddress: "",
         destinationAddress: "",
-        socketId: "",
+        desLatLon: {},
+        userId: "",
         startLatLon: "",
+        path: [],
       });
     }
   };
@@ -62,8 +64,10 @@ const DriverMapControl = ({
     setOrderData({
       startAddress: "",
       destinationAddress: "",
-      socketId: "",
+      desLatLon: {},
+      userId: "",
       startLatLon: "",
+      path: [],
     });
   };
 
@@ -74,14 +78,15 @@ const DriverMapControl = ({
   const pickUp = async () => {
     const result = await request.post({
       uri: "/api/call/driverpickup",
-      data: { userSocketId: orderData.userSocketId },
+      data: { userId: orderData.userId },
     });
     if (result.data.result) {
       navigate("/driver/godestination", {
         state: {
           desLatLon: desLatLon,
           pathData: { path: path },
-          curLoc: curLatLon,
+          driverLatLon: curLatLon,
+          userId: orderData.userId,
         },
       });
     }

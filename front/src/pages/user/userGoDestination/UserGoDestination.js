@@ -1,13 +1,18 @@
 import Map from "../../../components/Map";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { io } from "socket.io-client";
+import request from "../../../utils/serverAxios";
+
+const socket = io("http://localhost:8080");
 
 const UserGoDestination = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { desLatLon, pathData, curLoc } = location.state;
+  const { desLatLon, pathData, curLL, preSocketId } = location.state;
   const [curLatLon, setCurLatLon] = useState({
-    lat: curLoc.lat,
-    lon: curLoc.lon,
+    lat: curLL.lat,
+    lon: curLL.lon,
   });
 
   const watchUpdateCurrentLocation = (location) => {
@@ -20,6 +25,18 @@ const UserGoDestination = () => {
   };
 
   useEffect(() => {
+    (async () => {
+      await request.post({
+        uri: "/api/call/updateid",
+        data: { userSocketId: socket.id, preSocketId: preSocketId },
+      });
+    })();
+
+    socket.on("finishDrive", () => {
+      alert("운행이 종료되었습니다");
+      navigate("/user");
+    });
+
     navigator.geolocation.watchPosition(watchUpdateCurrentLocation);
     return () => {
       navigator.geolocation.clearWatch();

@@ -2,7 +2,9 @@ import React, { useEffect } from "react";
 
 const { naver } = window;
 
-const Map = ({ curLatLon, setCurLatLon, pathData, desLatLon }) => {
+const Map = ({ curLatLon, setCurLatLon, pathData, desLatLon, userType }) => {
+  const { path } = pathData;
+
   useEffect(() => {
     //맵생성
     const mapOptions = {
@@ -24,22 +26,13 @@ const Map = ({ curLatLon, setCurLatLon, pathData, desLatLon }) => {
     });
 
     //인포윈도우
-    if (pathData?.driverLatLon?.lat) {
-      const infowindow = new naver.maps.InfoWindow({
-        position: new naver.maps.LatLng(
-          pathData.driverLatLon.lat,
-          pathData.driverLatLon.lon
-        ),
-        content: '<div style="padding:5px;">기사님</div>',
-      });
-      infowindow.open(map, marker);
-    } else {
-      const infowindow = new naver.maps.InfoWindow({
-        position: new naver.maps.LatLng(curLatLon.lat, curLatLon.lon),
-        content: '<div style="padding:5px;">현위치</div>',
-      });
-      infowindow.open(map, marker);
-    }
+    const infowindow = new naver.maps.InfoWindow({
+      position: new naver.maps.LatLng(curLatLon.lat, curLatLon.lon),
+      content: `<div style="padding:5px;">${
+        userType === "driver" ? "기사님" : "현위치"
+      }</div>`,
+    });
+    infowindow.open(map, marker);
 
     map.addListener("click", (e) => {
       const lat = e.coord.y;
@@ -47,10 +40,10 @@ const Map = ({ curLatLon, setCurLatLon, pathData, desLatLon }) => {
       setCurLatLon({ lat: lat, lon: lon });
     });
 
-    if (pathData.path.length !== 0) {
+    if (path.length !== 0 && desLatLon.lat !== "") {
       const polyline = new naver.maps.Polyline({
         map: map,
-        path: pathData.path,
+        path: path,
         strokeColor: "#ff0000",
         strokeWeight: 3,
       });
@@ -61,7 +54,7 @@ const Map = ({ curLatLon, setCurLatLon, pathData, desLatLon }) => {
       map.setCenter(center);
       map.setZoom(13, true);
     }
-  }, [curLatLon, pathData]);
+  }, [curLatLon, path]);
 
   return (
     <div

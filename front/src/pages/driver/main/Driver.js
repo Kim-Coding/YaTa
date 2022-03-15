@@ -11,7 +11,7 @@ const initialOrderData = {
   startAddress: "",
   destinationAddress: "",
   desLatLon: {},
-  userSocketId: "",
+  userId: "",
   startLatLon: "",
   path: [],
 };
@@ -42,12 +42,12 @@ const Driver = () => {
 
   useEffect(() => {
     (async () => {
-      if (orderData.userSocketId) {
+      if (orderData.userId) {
         await request.post({
           uri: "/api/call/driverlocation",
           data: {
             driverLatLon: curLatLon,
-            userSocketId: orderData.userSocketId,
+            userId: orderData.userId,
           },
         });
       }
@@ -57,7 +57,7 @@ const Driver = () => {
   useEffect(() => {
     socket.on("clientCallToDriver", async (data) => {
       const {
-        userSocketId,
+        userId,
         startAddress,
         startLatLon,
         destinationAddress,
@@ -77,7 +77,7 @@ const Driver = () => {
           startAddress: startAddress,
           destinationAddress: destinationAddress,
           desLatLon: destinationLatLon,
-          userSocketId: userSocketId,
+          userId: userId,
           startLatLon: startLatLon,
           path: path,
         });
@@ -92,6 +92,7 @@ const Driver = () => {
         setCurLatLon={setCurLatLon}
         pathData={pathData}
         desLatLon={orderData.startLatLon}
+        userType="driver"
       />
       <DriverMapControl
         curLatLon={curLatLon}

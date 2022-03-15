@@ -12,7 +12,6 @@ const initialPathData = {
   duration: "",
   taxiFare: "",
   distance: "",
-  driverLatLon: { lat: "", lon: "" },
 };
 const socket = io("http://localhost:8080");
 
@@ -27,7 +26,6 @@ const User = () => {
   const [desLatLon, setDesLatLon] = useState();
   const [destinationAddress, setDestinationAddress] = useState("");
   const [pathData, setPathData] = useState(initialPathData);
-  const [isMatching, setIsMatching] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,21 +37,12 @@ const User = () => {
       });
     }
     //매칭성공
-    socket.on("successMatching", () => {
-      setIsMatching(true);
-    });
-    //driver 위치
-    socket.on("driverLocation", (LatLon) => {
-      const { lat, lon } = LatLon;
-      setPathData({ ...pathData, driverLatLon: { lat: lat, lon: lon } });
-    });
-    //기사님이 픽업
-    socket.on("driverPickUp", (data) => {
-      navigate("/user/godestination", {
+    socket.on("successMatching", (driverLatLon) => {
+      navigate("/user/waiting", {
         state: {
-          desLatLon: data.latlon,
-          pathData: { path: data.desPath },
-          curLoc: curLatLon,
+          driverStartLatLon: driverLatLon,
+          pathData: pathData,
+          preSocketId: socket.id,
         },
       });
     });
@@ -97,16 +86,14 @@ const User = () => {
 
   return (
     <StyledDiv>
-      <Map
-        curLatLon={curLatLon}
-        setCurLatLon={setCurLatLon}
-        pathData={pathData}
-        desLatLon={desLatLon}
-      />
-      <br></br>
-      {isMatching ? (
-        "기사님 오는 중"
-      ) : (
+      <>
+        <Map
+          curLatLon={curLatLon}
+          setCurLatLon={setCurLatLon}
+          pathData={pathData}
+          desLatLon={desLatLon}
+          userType="user"
+        />
         <UserMapControl
           curLatLon={curLatLon}
           currentAddress={currentAddress}
@@ -117,7 +104,7 @@ const User = () => {
           pathData={pathData}
           socket={socket}
         />
-      )}
+      </>
     </StyledDiv>
   );
 };

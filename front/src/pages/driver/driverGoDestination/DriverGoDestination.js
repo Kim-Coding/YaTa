@@ -1,17 +1,28 @@
 import { Button } from "@mui/material";
 import Map from "../../../components/Map";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import request from "../../../utils/serverAxios";
 
 const DriverGoDestination = () => {
+  const navigate = useNavigate();
   const location = useLocation();
-  const { desLatLon, pathData, curLoc } = location.state;
+  const { desLatLon, pathData, driverLatLon, userId } = location.state;
   const [curLatLon, setCurLatLon] = useState({
-    lat: curLoc.lat,
-    lon: curLoc.lon,
+    lat: driverLatLon.lat,
+    lon: driverLatLon.lon,
   });
 
-  const finishDrive = () => {};
+  const finishDrive = async () => {
+    const result = await request.post({
+      uri: "/api/call/finish",
+      data: { userId: userId },
+    });
+    if (result.data.result) {
+      alert("안전 운전 감사합니다");
+      navigate("/driver");
+    }
+  };
 
   const watchUpdateCurrentLocation = (location) => {
     const lat = location.coords.latitude;

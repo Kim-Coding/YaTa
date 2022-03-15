@@ -75,6 +75,7 @@ const UserMapControl = ({
         startAddress: currentAddress,
         destinationLatLon: desLatLon,
         destinationAddress: destinationAddress,
+        status: "waiting",
       },
     });
     if (result.data.result) {

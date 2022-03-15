@@ -5,12 +5,14 @@ import Signup from "./pages/signup";
 import Auth from "./hoc/Auth";
 import Nav from "./components/Nav";
 import User from "./pages/user/main";
+import UserWaiting from "./pages/user/userWaiting/UserWaiting";
 import Driver from "./pages/driver/main";
 import UserGoDestination from "./pages/user/userGoDestination";
 import DriverGoDestination from "./pages/driver/driverGoDestination";
 
 const App = () => {
   const AuthUserPage = Auth(User);
+  const AuthUserWaitingPage = Auth(UserWaiting);
   const AuthUserGoDestinationPage = Auth(UserGoDestination);
   const AuthDriverPage = Auth(Driver);
   const AuthDriverGoDestinationPage = Auth(DriverGoDestination);
@@ -23,6 +25,7 @@ const App = () => {
 
         <Route element={<Nav />}>
           <Route path="/user" element={<AuthUserPage />} />
+          <Route path="/user/waiting" element={<AuthUserWaitingPage />} />
           <Route
             path="/user/godestination"
             element={<AuthUserGoDestinationPage />}
